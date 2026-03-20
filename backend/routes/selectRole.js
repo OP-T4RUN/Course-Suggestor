@@ -4,6 +4,19 @@ import { authMiddleware } from "../middleware/jwtAuth.js";
 
 const router = Router();
 
+router.post("/checkrole", authMiddleware, async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const pendingroles = await pool.query(`SELECT role FROM user_credentials WHERE email = $1 `, [email]);
+
+        if (pendingroles.rows[0] == 'pending') res.json({ msg: "pending" });
+        else res.json({ msg: "not pending" });
+    } catch (err) {
+        res.status(500).json({ msg: "Server error" });
+    }
+});
+
 router.patch("/role", authMiddleware, async (req, res) => {
     try {
         const { role } = req.body;
