@@ -10,7 +10,7 @@ router.post("/checkrole", authMiddleware, async (req, res) => {
     try {
         const pendingroles = await pool.query(`SELECT role FROM user_credentials WHERE email = $1 `, [email]);
 
-        if (pendingroles.rows[0] == 'pending') res.json({ msg: "pending" });
+        if (pendingroles.rows[0]?.role == 'pending') res.json({ msg: "pending" });
         else res.json({ msg: "not pending" });
     } catch (err) {
         res.status(500).json({ msg: "Server error" });
