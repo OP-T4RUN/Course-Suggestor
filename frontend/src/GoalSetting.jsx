@@ -1,63 +1,69 @@
 import { Search, MapPin, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 export default function GoalSetting() {
-  const [searchParams] = useSearchParams();
-
   const [showRolePopup, setShowRolePopup] = useState(false);
   const [role, setRole] = useState("learner");
+  const [email, setEmail] = useState("");
 
-  const email = searchParams.get("email");
-
-  // ✅ CHECK ROLE FROM BACKEND
+  // ✅ GET USER FROM TOKEN
   useEffect(() => {
-    const checkRole = async () => {
+    // ✅ STEP 1: get token from URL (google login)
+  const params = new URLSearchParams(window.location.search);
+  const tokenFromUrl = params.get("token");
+
+  if (tokenFromUrl) {
+    localStorage.setItem("token", tokenFromUrl);
+
+    // OPTIONAL: clean URL
+    window.history.replaceState({}, document.title, "/goal-setting");
+  }
+
+  // ✅ STEP 2: get token from localStorage
+  const token = localStorage.getItem("token");
+
+    if (token) {
       try {
-        const res = await fetch("http://localhost:3000/users/checkrole", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        });
+        const decoded = jwtDecode(token);
+        console.log("Decoded token:", decoded);
 
-        const data = await res.json();
+        setEmail(decoded.email);
 
-        if (!res.ok) {
-          throw new Error(data.message || "Error checking role");
-        }
-
-        // 👉 if pending → show popup
-        if (data.status === "pending") {
+        // 👉 show popup if role is pending
+        if (decoded.role === "pending") {
           setShowRolePopup(true);
         }
 
       } catch (err) {
-        console.error(err);
+        console.error("Invalid token");
       }
-    };
-
-    if (email) {
-      checkRole();
     }
-  }, [email]);
+  }, []);
 
   // ✅ SAVE ROLE
   const handleSaveRole = async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await fetch("http://localhost:3000/users/role", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email, role }),
+        body: JSON.stringify({ role }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Failed to set role");
+      }
+
+      // 🔥 IMPORTANT: update token after role change
+      if (data.token) {
+        localStorage.setItem("token", data.token);
       }
 
       setShowRolePopup(false);
@@ -80,8 +86,13 @@ export default function GoalSetting() {
             Define Your Career Path
           </h1>
 
-          <p className="text-purple-300 mb-8">
+          <p className="text-purple-300 mb-2">
             Step 2 of 4: Goal Setting
+          </p>
+
+          {/* OPTIONAL EMAIL DISPLAY */}
+          <p className="text-sm text-gray-500 mb-6">
+            Logged in as: {email}
           </p>
 
           {/* Progress Bar */}

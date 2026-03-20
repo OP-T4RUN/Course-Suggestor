@@ -131,20 +131,22 @@ export default function LoginPage() {
           <div className="flex gap-4 mb-6">
             <button
               onClick={() => setRole("learner")}
-              className={`w-1/2 py-2 rounded-lg border ${role === "learner"
+              className={`w-1/2 py-2 rounded-lg border ${
+                role === "learner"
                   ? "bg-purple-600 text-white"
                   : "bg-white text-gray-600"
-                }`}
+              }`}
             >
               Learner
             </button>
 
             <button
               onClick={() => setRole("mentor")}
-              className={`w-1/2 py-2 rounded-lg border ${role === "mentor"
+              className={`w-1/2 py-2 rounded-lg border ${
+                role === "mentor"
                   ? "bg-purple-600 text-white"
                   : "bg-white text-gray-600"
-                }`}
+              }`}
             >
               Mentor
             </button>
@@ -171,8 +173,8 @@ export default function LoginPage() {
           <div className="flex gap-4 justify-center items-center">
             <button
               onClick={() =>
-              (window.location.href =
-                "http://localhost:3000/auth/google")
+                (window.location.href =
+                  "http://localhost:3000/auth/google")
               }
               className="w-1/2 border rounded-lg py-2 flex justify-center items-center gap-2 hover:bg-gray-100"
             >
