@@ -4,7 +4,7 @@ import { authMiddleware } from "../middleware/jwtAuth.js";
 
 const router = Router();
 
-router.get("/checkrole", authMiddleware, async (req, res) => {
+router.post("/checkrole", authMiddleware, async (req, res) => {
     const { email } = req.body;
 
     try {
