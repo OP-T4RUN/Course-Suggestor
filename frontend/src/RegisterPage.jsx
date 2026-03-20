@@ -1,16 +1,8 @@
 import React, { useState } from "react";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Target,
-  Zap,
-  TrendingUp,
-} from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,9 +10,9 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const res = await fetch("http://localhost:3000/auth/login", {
+      const res = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,14 +23,15 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || "Registration failed");
       }
 
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
 
-      navigate(`/goal-setting?email=${encodeURIComponent(email)}`);
+      navigate("/goal-setting");
+
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -49,6 +42,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex font-sans">
       {/* LEFT SECTION */}
       <div className="w-1/2 bg-gray-50 flex flex-col justify-center items-center px-16">
+        
         {/* Logo */}
         <div className="absolute top-6 left-10 flex items-center gap-2">
           <div className="bg-purple-600 p-2 rounded-lg text-white">✨</div>
@@ -59,21 +53,21 @@ export default function LoginPage() {
 
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold text-purple-600 mb-1">
-            CareerPath
+            Create Account
           </h2>
           <p className="text-gray-500 mb-6 italic">
-            "Your career journey starts here"
+            Start your career journey today
           </p>
 
           {/* Tabs */}
           <div className="flex bg-gray-200 rounded-lg p-1 mb-6">
-            <button className="w-1/2 bg-white py-2 rounded-md shadow text-purple-600 font-medium">
-              Login
-            </button>
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/")}
               className="w-1/2 py-2 text-gray-500 font-medium"
             >
+              Login
+            </button>
+            <button className="w-1/2 bg-white py-2 rounded-md shadow text-purple-600 font-medium">
               Sign Up
             </button>
           </div>
@@ -93,11 +87,11 @@ export default function LoginPage() {
 
           {/* Password */}
           <label className="text-sm text-gray-600">Password</label>
-          <div className="flex items-center border rounded-lg px-3 py-2 mb-2 bg-white">
+          <div className="flex items-center border rounded-lg px-3 py-2 mb-4 bg-white">
             <Lock className="text-gray-400 w-4 h-4 mr-2" />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Create a password"
               className="w-full outline-none text-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -115,115 +109,64 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Remember + Forgot */}
-          <div className="flex justify-between items-center mb-6 text-sm">
-            <div className="flex items-center gap-2">
-              <input type="checkbox" />
-              <span className="text-gray-600">Remember me</span>
-            </div>
-            <span className="text-purple-600 cursor-pointer">
-              Forgot password?
-            </span>
-          </div>
-
           {/* Role Selection */}
           <label className="text-sm text-gray-600">Select Role</label>
           <div className="flex gap-4 mb-6">
             <button
               onClick={() => setRole("learner")}
-              className={`w-1/2 py-2 rounded-lg border ${role === "learner"
+              className={`w-1/2 py-2 rounded-lg border ${
+                role === "learner"
                   ? "bg-purple-600 text-white"
                   : "bg-white text-gray-600"
-                }`}
+              }`}
             >
               Learner
             </button>
 
             <button
               onClick={() => setRole("mentor")}
-              className={`w-1/2 py-2 rounded-lg border ${role === "mentor"
+              className={`w-1/2 py-2 rounded-lg border ${
+                role === "mentor"
                   ? "bg-purple-600 text-white"
                   : "bg-white text-gray-600"
-                }`}
+              }`}
             >
               Mentor
             </button>
           </div>
 
-          {/* Login Button */}
+          {/* Register Button */}
           <button
-            onClick={handleLogin}
+            onClick={handleRegister}
             className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold shadow-lg hover:opacity-90 transition mb-6"
           >
-            Login
+            Create Account
           </button>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-gray-300" />
-            <span className="text-gray-400 text-sm">
-              or continue with
-            </span>
-            <div className="flex-1 h-px bg-gray-300" />
-          </div>
-
-          {/* Social Buttons */}
-          <div className="flex gap-4 justify-center items-center">
-            <button
-              onClick={() =>
+          {/* Google Auth */}
+          <button
+            onClick={() =>
               (window.location.href =
                 "http://localhost:3000/auth/google")
-              }
-              className="w-1/2 border rounded-lg py-2 flex justify-center items-center gap-2 hover:bg-gray-100"
-            >
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="google"
-                className="w-4 h-4"
-              />
-              Google
-            </button>
-          </div>
+            }
+            className="w-full border rounded-lg py-2 flex justify-center items-center gap-2 hover:bg-gray-100"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="google"
+              className="w-4 h-4"
+            />
+            Continue with Google
+          </button>
         </div>
       </div>
 
       {/* RIGHT SECTION */}
-      <div className="w-1/2 bg-gradient-to-br from-purple-700 via-purple-600 to-purple-500 text-white flex flex-col justify-center px-20">
-        <h1 className="text-4xl font-bold leading-snug mb-10">
-          Success is not just about <br />
-          making a life, it's about <br />
-          making a difference.
+      <div className="w-1/2 bg-gradient-to-br from-purple-700 via-purple-600 to-purple-500 text-white flex items-center justify-center px-20">
+        <h1 className="text-4xl font-bold leading-snug">
+          Join us and start building <br />
+          your dream career today 🚀
         </h1>
-
-        <div className="space-y-6">
-          <FeatureCard
-            icon={<Target />}
-            title="Get job ready"
-            desc="Build the skills employers are looking for"
-          />
-          <FeatureCard
-            icon={<Zap />}
-            title="Learn Faster"
-            desc="Accelerate your learning with expert guidance"
-          />
-          <FeatureCard
-            icon={<TrendingUp />}
-            title="Achieve your goals"
-            desc="Turn your career aspirations into reality"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, desc }) {
-  return (
-    <div className="flex items-center gap-4 bg-white/10 p-4 rounded-xl backdrop-blur-md">
-      <div className="bg-white/20 p-3 rounded-lg">{icon}</div>
-      <div>
-        <h3 className="font-semibold">{title}</h3>
-        <p className="text-sm text-purple-200">{desc}</p>
       </div>
     </div>
   );
